@@ -23,6 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
           .get(Uri.parse('http://192.168.100.88/kuliner_jogja/read.php'));
       if (respon.statusCode == 200) {
         final data = jsonDecode(respon.body);
+        print(data);
         setState(() {
           _listdata = data;
           _loading = false;

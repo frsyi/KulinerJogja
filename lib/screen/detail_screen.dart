@@ -16,7 +16,7 @@ class _DetailScreenState extends State<DetailScreen> {
   File? _image;
   final _imagePicker = ImagePicker();
   String? _alamat;
-  String _jenis = 'makanan';
+  String _jenis = 'Makanan';
 
   final _formKey = GlobalKey<FormState>();
   final _namaController = TextEditingController();
@@ -57,9 +57,12 @@ class _DetailScreenState extends State<DetailScreen> {
                   subtitle: Text(widget.ListData['deskripsi']),
                 ),
                 ListTile(
-                  title: const Text('Alamat'),
+                  title: const Text('Lokasi'),
                   subtitle: Text(widget.ListData['alamat']),
                 ),
+                _image == null
+                    ? const Text('Tidak ada gambar yang dipilih.')
+                    : Image.file(_image!),
               ],
             ),
           ),

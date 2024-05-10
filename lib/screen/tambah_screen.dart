@@ -61,25 +61,14 @@ class _FormKulinerState extends State<FormKuliner> {
   }
 
   Future _savedata() async {
-    if (_image == null) {
-      final snackBar = SnackBar(content: Text('Pilih foto terlebih dahulu'));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      return false;
-    }
-
-    // Ubah file gambar menjadi byte array
-    List<int> imageBytes = await _image!.readAsBytes();
-
-    // Konversi byte array menjadi base64
-    String base64Image = base64Encode(imageBytes);
-
     final respon = await http.post(
         Uri.parse('http://192.168.100.88/kuliner_jogja/create.php'),
         body: {
           'nama': _namaController.text,
           'jenis': _jenis,
           'deskripsi': _deskripsiController.text,
-          'foto': base64Image,
+          'alamat': _alamat,
+          'foto': _image,
         });
     if (respon.statusCode == 200) {
       return true;
@@ -163,11 +152,11 @@ class _FormKulinerState extends State<FormKuliner> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text("Alamat"),
+                    const Text("Lokasi"),
                     _alamat == null
                         ? const SizedBox(
                             width: double.infinity,
-                            child: Text('Alamat Kosong'))
+                            child: Text('Lokasi Kosong'))
                         : Text('$_alamat'),
                     _alamat == null
                         ? TextButton(
@@ -184,7 +173,7 @@ class _FormKulinerState extends State<FormKuliner> {
                                 ),
                               );
                             },
-                            child: const Text('Pilih Alamat'))
+                            child: const Text('Pilih Lokasi'))
                         : TextButton(
                             onPressed: () async {
                               Navigator.push(
@@ -200,7 +189,7 @@ class _FormKulinerState extends State<FormKuliner> {
                               );
                               setState(() {});
                             },
-                            child: const Text('Ubah Alamat'),
+                            child: const Text('Ubah Lokasi'),
                           )
                   ],
                 ),

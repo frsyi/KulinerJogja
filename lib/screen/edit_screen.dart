@@ -19,7 +19,7 @@ class _EditScreenState extends State<EditScreen> {
   File? _image;
   final _imagePicker = ImagePicker();
   String? _alamat;
-  String _jenis = 'makanan';
+  late String _jenis = 'makanan';
 
   final _formKey = GlobalKey<FormState>();
   final _namaController = TextEditingController();
@@ -37,24 +37,13 @@ class _EditScreenState extends State<EditScreen> {
   }
 
   Future _editdata() async {
-    if (_image == null) {
-      final snackBar = SnackBar(content: Text('Pilih foto terlebih dahulu'));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      return false;
-    }
-
-    // Ubah file gambar menjadi byte array
-    List<int> imageBytes = await _image!.readAsBytes();
-
-    // Konversi byte array menjadi base64
-    String base64Image = base64Encode(imageBytes);
-
     final respon = await http
         .post(Uri.parse('http://192.168.100.88/kuliner_jogja/edit.php'), body: {
       'nama': _namaController.text,
       'jenis': _jenis,
       'deskripsi': _deskripsiController.text,
-      'foto': base64Image,
+      'alamat': _alamat,
+      'foto': _image,
     });
     if (respon.statusCode == 200) {
       return true;
@@ -65,7 +54,7 @@ class _EditScreenState extends State<EditScreen> {
   @override
   Widget build(BuildContext context) {
     _namaController.text = widget.ListData['nama'];
-    _jenis = widget.ListData['jenis'];
+    _jenis = widget.ListData['jenis'] ?? 'Makanan';
     _deskripsiController.text = widget.ListData['deskripsi'];
     _alamat = widget.ListData['alamat'];
     _image = widget.ListData['foto'];
@@ -97,29 +86,34 @@ class _EditScreenState extends State<EditScreen> {
                 ),
                 Container(
                   margin: const EdgeInsets.all(16),
-                  child: Row(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text('Jenis Kuliner:'),
-                      Radio<String>(
-                        value: 'makanan',
-                        groupValue: _jenis,
-                        onChanged: (value) {
-                          setState(() {
-                            _jenis = value!;
-                          });
-                        },
+                      Row(
+                        children: [
+                          Radio<String>(
+                            value: 'makanan',
+                            groupValue: _jenis,
+                            onChanged: (value) {
+                              setState(() {
+                                _jenis = value!;
+                              });
+                            },
+                          ),
+                          const Text('Makanan'),
+                          Radio<String>(
+                            value: 'minuman',
+                            groupValue: _jenis,
+                            onChanged: (value) {
+                              setState(() {
+                                _jenis = value!;
+                              });
+                            },
+                          ),
+                          const Text('Minuman'),
+                        ],
                       ),
-                      const Text('Makanan'),
-                      Radio<String>(
-                        value: 'minuman',
-                        groupValue: _jenis,
-                        onChanged: (value) {
-                          setState(() {
-                            _jenis = value!;
-                          });
-                        },
-                      ),
-                      const Text('Minuman'),
                     ],
                   ),
                 ),
@@ -144,11 +138,11 @@ class _EditScreenState extends State<EditScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text("Alamat"),
+                      const Text("Lokasi"),
                       _alamat == null
                           ? const SizedBox(
                               width: double.infinity,
-                              child: Text('Alamat Kosong'))
+                              child: Text('Lokasi Kosong'))
                           : Text('$_alamat'),
                       _alamat == null
                           ? TextButton(
@@ -165,7 +159,7 @@ class _EditScreenState extends State<EditScreen> {
                                   ),
                                 );
                               },
-                              child: const Text('Pilih Alamat'))
+                              child: const Text('Pilih Lokasi'))
                           : TextButton(
                               onPressed: () async {
                                 Navigator.push(
@@ -181,7 +175,7 @@ class _EditScreenState extends State<EditScreen> {
                                 );
                                 setState(() {});
                               },
-                              child: const Text('Ubah Alamat'),
+                              child: const Text('Ubah Lokasi'),
                             )
                     ],
                   ),
